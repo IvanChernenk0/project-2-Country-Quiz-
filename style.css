@@ -3,10 +3,10 @@
   --c1: #242951;
   --c2: #272c54;
   --c3: #343963;
-  --c4: #E2E4F3;
-  --c5: linear-gradient(to right, #E65895, #BC6BE8);
-  --c6: #393F6F;
-  --c7: #FFEDC9;
+  --c4: #e2e4f3;
+  --c5: linear-gradient(to right, #e65895, #bc6be8);
+  --c6: #393f6f;
+  --c7: #ffedc9;
 }
 
 @keyframes fadeQuiz {
@@ -99,7 +99,7 @@
   color: var(--c4);
   font-weight: 700;
   font-size: 16px;
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 }
 
 .active {
@@ -133,7 +133,7 @@
   border-radius: 12px;
   opacity: 0;
   animation: fadeInQuiz 0.45s ease forwards;
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 }
 
 .answer-option:hover,
@@ -179,7 +179,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 4px solid #E1E3F2;
+  border: 4px solid #e1e3f2;
 }
 
 .congrats-text {
@@ -201,10 +201,9 @@
   font-weight: 500;
   border-radius: 10px;
   background-image: var(--c5);
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 }
 
 .hidden {
   display: none;
 }
-

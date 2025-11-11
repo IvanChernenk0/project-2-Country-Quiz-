@@ -8,25 +8,32 @@ const playAgain = document.querySelector('.play-again');
 
 const total = 10;
 const allShuffled = [];
-let points = 0, completedQuestion = 0, questionCountries, questions = [] , currentQuestion = 0;
-
+let points = 0,
+  completedQuestion = 0,
+  questionCountries,
+  questions = [],
+  currentQuestion = 0;
 
 const stepsLoader = function () {
   for (let i = 0; i < 10; i++) {
     if (i === 0) {
-      steps.innerHTML += `<button class="step active" data-id="${i}">${i + 1}</button>`;
+      steps.innerHTML += `<button class="step active" data-id="${i}">${
+        i + 1
+      }</button>`;
     } else {
-      steps.innerHTML += `<button class="step" data-id="${i}">${i + 1}</button>`;
+      steps.innerHTML += `<button class="step" data-id="${i}">${
+        i + 1
+      }</button>`;
     }
   }
 };
 
 stepsLoader();
 
-const contentChange = function() {
+const contentChange = function () {
   quizContainer.classList.toggle('hidden');
   resultContainer.classList.toggle('hidden');
-}
+};
 
 const getData = async function () {
   const rq = await fetch(
@@ -37,9 +44,11 @@ const getData = async function () {
   const countries = {};
   qData.forEach((c) => {
     if (c.name.common.length <= 23)
-    countries[c.name.common] = {capital: c.capital?.[0], name: c.name.common }
-  }
-  );
+      countries[c.name.common] = {
+        capital: c.capital?.[0],
+        name: c.name.common,
+      };
+  });
   return countries;
 };
 
@@ -70,23 +79,27 @@ const renderQuestion = async function () {
     }
   }
 
-  generateQuestions(countriesNumber, total)
+  generateQuestions(countriesNumber, total);
 
   const countriesGroup = [questions[currentQuestion][1]];
-  const questionType = questions[currentQuestion][0].startsWith('What is the capital of'); 
+  const questionType = questions[currentQuestion][0].startsWith(
+    'What is the capital of'
+  );
 
   while (countriesGroup.length < 4) {
     const idx = Math.floor(Math.random() * countriesNumber.length);
-    let responseType = questionType ? countriesNumber[idx].capital : countriesNumber[idx].name;
+    let responseType = questionType
+      ? countriesNumber[idx].capital
+      : countriesNumber[idx].name;
 
     if (!countriesGroup.includes(responseType)) {
-        countriesGroup.push(responseType);
-        }
+      countriesGroup.push(responseType);
     }
-    
-  const shuffleCountries = _.shuffle(countriesGroup)  
-  
-  if (!allShuffled.some(q => q.id === currentQuestion)) {
+  }
+
+  const shuffleCountries = _.shuffle(countriesGroup);
+
+  if (!allShuffled.some((q) => q.id === currentQuestion)) {
     allShuffled.push({
       id: currentQuestion,
       answers: shuffleCountries,
@@ -97,81 +110,99 @@ const renderQuestion = async function () {
     });
   }
 
-  questionCountries = allShuffled.find(country => country.id === currentQuestion); 
+  questionCountries = allShuffled.find(
+    (country) => country.id === currentQuestion
+  );
 
-  quiz.insertAdjacentHTML('beforeend',`            
+  quiz.insertAdjacentHTML(
+    'beforeend',
+    `            
       <p class="question-text">${questions[currentQuestion][0]}</p>
       <div class="answer-option-container">
-          ${questionCountries.answers.map(country => `<button class="answer-option ${questionCountries.selectedCountry === country ? 'active' : ''}">${country}<span class="emoji">${questionCountries.selectedCountry === country ? (questionCountries.correctly ? '✅' : '❌') : (questionCountries.correctCountry === country ? '✅' : '')}</span></button>`).join('')}
-      </div>`);     
+          ${questionCountries.answers
+            .map(
+              (country) =>
+                `<button class="answer-option ${
+                  questionCountries.selectedCountry === country ? 'active' : ''
+                }">${country}<span class="emoji">${
+                  questionCountries.selectedCountry === country
+                    ? questionCountries.correctly
+                      ? '✅'
+                      : '❌'
+                    : questionCountries.correctCountry === country
+                    ? '✅'
+                    : ''
+                }</span></button>`
+            )
+            .join('')}
+      </div>`
+  );
 };
 
-renderQuestion()
+renderQuestion();
 
-steps.addEventListener('click', function(e){
-
+steps.addEventListener('click', function (e) {
   let btn = e.target.closest('.step');
   if (!btn) return;
 
-  let id = +btn.dataset.id
-  if (currentQuestion === id) return
-  currentQuestion = id;    
+  let id = +btn.dataset.id;
+  if (currentQuestion === id) return;
+  currentQuestion = id;
 
   while (quiz.children.length > 1) {
-    quiz.removeChild(quiz.lastElementChild)
+    quiz.removeChild(quiz.lastElementChild);
   }
-  
+
   const stepsAll = steps.querySelectorAll('.step');
-  stepsAll.forEach(b => b.classList.remove('active'))
-  btn.classList.add('active')
+  stepsAll.forEach((b) => b.classList.remove('active'));
+  btn.classList.add('active');
 
-  renderQuestion()
-})
+  renderQuestion();
+});
 
-quiz.addEventListener('click', function(e){
-
+quiz.addEventListener('click', function (e) {
   let btn = e.target.closest('.answer-option');
   if (!btn) return;
 
   questionCountries.selected = true;
-  
-  if(!questionCountries.completed){
 
+  if (!questionCountries.completed) {
     if (btn.textContent === questions[currentQuestion][1]) {
-      btn.querySelector('.emoji').textContent ='✅';
-      points += 1
-      quizPoints.textContent = `🏆 ${points}/10 Points`
+      btn.querySelector('.emoji').textContent = '✅';
+      points += 1;
+      quizPoints.textContent = `🏆 ${points}/10 Points`;
       questionCountries.correctly = true;
     } else {
-      btn.querySelector('.emoji').textContent ='❌';
+      btn.querySelector('.emoji').textContent = '❌';
       questionCountries.correctly = false;
     }
-    
-    questionCountries.correctCountry = questions[currentQuestion][1];
-    
-    quiz.querySelectorAll('.answer-option').forEach( btn => {
-      btn.textContent === questionCountries.correctCountry ? btn.querySelector('.emoji').textContent = '✅' : ''
-    })
-    
-    completedQuestion += 1
-    questionCountries.completed = true;
-    questionCountries.selectedCountry = btn.textContent.slice(0,-1);
 
-    steps.querySelectorAll('.step').forEach( s => {
+    questionCountries.correctCountry = questions[currentQuestion][1];
+
+    quiz.querySelectorAll('.answer-option').forEach((btn) => {
+      btn.textContent === questionCountries.correctCountry
+        ? (btn.querySelector('.emoji').textContent = '✅')
+        : '';
+    });
+
+    completedQuestion += 1;
+    questionCountries.completed = true;
+    questionCountries.selectedCountry = btn.textContent.slice(0, -1);
+
+    steps.querySelectorAll('.step').forEach((s) => {
       if (questionCountries.id === +s.dataset.id) {
-        s.classList.add('complited')
-      } 
-    })
-    btn.classList.add('active')
+        s.classList.add('complited');
+      }
+    });
+    btn.classList.add('active');
   }
 
   if (completedQuestion === total) {
     contentChange();
-    correctAnswerText.textContent = `You answer ${points}/10 correctly.`
+    correctAnswerText.textContent = `You answer ${points}/10 correctly.`;
   }
-  
-})
+});
 
-playAgain.addEventListener('click', function() {
+playAgain.addEventListener('click', function () {
   window.location.reload();
-})
+});
